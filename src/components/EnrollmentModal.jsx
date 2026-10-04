@@ -11,18 +11,40 @@ export default function EnrollmentModal({ initialCourse, onClose }) {
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const selectedCourse = coursesData.find(c => c.id === selectedCourseId) || coursesData[0];
+
+  const buildWhatsAppMessage = () => {
+    return encodeURIComponent(
+      `*🕌 NEW ENROLLMENT APPLICATION*\n` +
+      `*Misaruljannah Institute*\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📚 *Course:* ${selectedCourse.title}\n` +
+      `🎓 *Level / Duration:* ${selectedCourse.level} (${selectedCourse.duration})\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `👤 *Student Name:* ${studentName.trim()}\n` +
+      `📱 *Student WhatsApp:* ${whatsappNumber.trim()}\n` +
+      `📧 *Email:* ${email.trim()}\n` +
+      `🕒 *Preferred Slot:* ${preferredTime}\n` +
+      `📝 *Notes/Background:* ${notes.trim() || 'None'}\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `_Sent from Misaruljannah Website Form_`
+    );
+  };
+
+  const getWhatsAppUrl = () => {
+    return `https://wa.me/923056679207?text=${buildWhatsAppMessage()}`;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const url = getWhatsAppUrl();
+    window.open(url, '_blank');
     setSubmitted(true);
   };
 
-  const selectedCourse = coursesData.find(c => c.id === selectedCourseId) || coursesData[0];
-
   const handleWhatsAppDirect = () => {
-    const text = encodeURIComponent(
-      `Assalamu Alaikum! I would like to enroll in *${selectedCourse.title}* at Misaruljannah Institute.\n\nMy Details:\nName: ${studentName || 'Learner'}\nEmail: ${email || 'N/A'}\nPreferred Time: ${preferredTime}`
-    );
-    window.open(`https://wa.me/923056679207?text=${text}`, '_blank');
+    const url = getWhatsAppUrl();
+    window.open(url, '_blank');
   };
 
   return (
@@ -151,41 +173,48 @@ export default function EnrollmentModal({ initialCourse, onClose }) {
                 />
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+              <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full sm:w-1/2 py-3.5 rounded-xl font-bold text-xs text-[#2C0A09] bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37] hover:brightness-110 shadow-md flex items-center justify-center space-x-2"
+                  className="w-full py-4 rounded-xl font-bold text-sm text-white bg-[#25D366] hover:bg-[#20ba5a] shadow-lg flex items-center justify-center space-x-2 transition-transform hover:scale-[1.01]"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Submit Enrollment Request</span>
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                  <span>Submit & Send Application via WhatsApp</span>
                 </button>
-
-                <button
-                  type="button"
-                  onClick={handleWhatsAppDirect}
-                  className="w-full sm:w-1/2 py-3.5 rounded-xl font-bold text-xs text-white bg-[#25D366] hover:bg-[#20ba5a] shadow-md flex items-center justify-center space-x-2"
-                >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  <span>Instant WhatsApp Connect</span>
-                </button>
+                <p className="text-[11px] text-[#5A3E39] text-center mt-2">
+                  Clicking submit will securely open WhatsApp with your pre-filled course enrollment details.
+                </p>
               </div>
 
             </form>
           ) : (
-            <div className="py-10 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#2D6A4F] text-white flex items-center justify-center mx-auto shadow-lg">
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-[#25D366] text-white flex items-center justify-center mx-auto shadow-lg">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <h4 className="text-2xl font-bold font-heading text-[#2C0A09]">JazakAllah Khair, {studentName}!</h4>
               <p className="text-sm text-[#5A3E39] max-w-md mx-auto font-light leading-relaxed">
-                Your enrollment application for <strong>{selectedCourse.title}</strong> has been received. Our coordinator will contact you via WhatsApp at <strong>{whatsappNumber}</strong> shortly with your class schedule.
+                Your enrollment request for <strong>{selectedCourse.title}</strong> has been created and sent to our WhatsApp coordinator at <strong>+92 305 6679207</strong>.
               </p>
-              <button
-                onClick={onClose}
-                className="mt-4 px-6 py-2.5 rounded-xl font-bold text-xs text-[#2C0A09] bg-[#D4AF37]"
-              >
-                Close & Return to Website
-              </button>
+
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs text-white bg-[#25D366] hover:bg-[#20ba5a] flex items-center justify-center space-x-2 shadow-md"
+                >
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>Open WhatsApp Again</span>
+                </a>
+
+                <button
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs text-[#2C0A09] bg-[#EDE3D5] hover:bg-[#D4AF37] transition-colors"
+                >
+                  Close & Return
+                </button>
+              </div>
             </div>
           )}
         </div>
