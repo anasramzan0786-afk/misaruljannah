@@ -18,7 +18,7 @@ export default function HeroSection({ onOpenEnroll }) {
   };
 
   return (
-    <section className="relative min-h-screen pt-32 pb-20 bg-islamic-pattern-dark flex items-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen pt-32 pb-20 bg-islamic-pattern-dark flex items-center overflow-hidden">
       
       {/* Background Graphic & Ambient Light */}
       <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
@@ -132,30 +132,38 @@ export default function HeroSection({ onOpenEnroll }) {
                 </div>
 
                 {/* Interactive Tajweed Recitation Audio Simulator */}
-                <div className="p-4 rounded-xl bg-[#4A1512]/80 border border-[#D4AF37]/30 space-y-3">
+                <div 
+                  className="p-4 rounded-xl bg-[#4A1512]/80 border border-[#D4AF37]/30 space-y-3 cursor-pointer hover:border-[#D4AF37]/60 transition-colors"
+                  onClick={toggleAudio}
+                >
                   {/* HTML5 Audio Element */}
                   <audio 
                     ref={audioRef} 
                     src="/hafiz_faisal_audio.mp3" 
                     onEnded={() => setIsPlayingAudio(false)} 
+                    onPause={() => setIsPlayingAudio(false)}
+                    onPlay={() => setIsPlayingAudio(true)}
                     preload="metadata"
                   />
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <button 
-                        onClick={toggleAudio}
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); toggleAudio(); }}
                         aria-label={isPlayingAudio ? "Pause recitation" : "Play recitation"}
-                        className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-[#2C0A09] flex items-center justify-center shadow-md hover:scale-105 transition-transform"
+                        className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-[#2C0A09] flex items-center justify-center shadow-md hover:scale-105 transition-transform shrink-0"
                       >
                         {isPlayingAudio ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                       </button>
                       <div>
                         <div className="text-xs font-bold text-[#FDFBF7]">Tajweed Recitation Audio</div>
-                        <div className="text-[11px] text-[#D4AF37]">Demonstration by Qari Faisal Bin Amjad</div>
+                        <div className="text-[11px] text-[#D4AF37]">
+                          {isPlayingAudio ? "Now Playing • Demonstration by Qari Faisal Bin Amjad" : "Click to Listen • Qari Faisal Bin Amjad"}
+                        </div>
                       </div>
                     </div>
-                    <Volume2 className="w-4 h-4 text-[#F3E5AB]" />
+                    <Volume2 className={`w-4 h-4 text-[#F3E5AB] ${isPlayingAudio ? 'animate-pulse text-[#D4AF37]' : ''}`} />
                   </div>
 
                   {/* Audio Waveform visualization */}
